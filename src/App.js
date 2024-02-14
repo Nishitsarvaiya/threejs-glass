@@ -1,9 +1,9 @@
-import { Clock, SRGBColorSpace, Scene } from 'three';
-import { createCamera, createRenderer } from './core-utils';
-import { Text } from 'troika-three-text';
+import { Clock, SRGBColorSpace, Scene } from "three";
+import { createCamera, createRenderer } from "./core-utils";
+import { Text } from "troika-three-text";
 
-const REGULAR_FONT = '/ClashDisplay-Regular.ttf';
-const MEDIUM_FONT = '/ClashDisplay-Medium.ttf';
+const REGULAR_FONT = "/ClashDisplay-Regular.ttf";
+const MEDIUM_FONT = "/ClashDisplay-Medium.ttf";
 
 export default class App {
 	static _renderer = this._renderer;
@@ -22,7 +22,7 @@ export default class App {
 
 	initApp() {
 		// get the canvas container
-		const container = document.getElementById('app');
+		const container = document.getElementById("app");
 
 		// Create the renderer
 		this._renderer = createRenderer({ antialias: true }, (_ren) => {
@@ -54,23 +54,28 @@ export default class App {
 	}
 
 	addObjects() {
-		const title = new Text();
-		title.font = MEDIUM_FONT;
-		title.text = '404';
-		title.fontSize = 1.86;
-		title.anchorX = 'center';
-		title.anchorY = 'middle';
+		this.title = new Text();
+		this.title.font = MEDIUM_FONT;
+		this.title.text = "404";
+		this.title.anchorX = "center";
+		this.title.anchorY = "middle";
+		this.title.textAlign = "center";
 
-		const subtitle = new Text();
-		subtitle.font = REGULAR_FONT;
-		subtitle.text = 'this link is broken';
-		subtitle.anchorX = 'center';
-		subtitle.fontSize = 0.165;
-		subtitle.letterSpacing = 0.05;
-		subtitle.position.y = -1;
+		this.subtitle = new Text();
+		this.subtitle.font = REGULAR_FONT;
+		this.subtitle.text = "this link is broken";
+		this.subtitle.anchorX = "center";
+		this.subtitle.letterSpacing = 0.05;
+		this.subtitle.position.y = -1;
 
-		this._scene.add(title);
-		this._scene.add(subtitle);
+		this.title.fontSize = this._vw > 992 ? 1.86 : 1.2;
+		this.subtitle.fontSize = this._vw > 576 ? 0.165 : 0.12;
+		this.subtitle.position.y = this._vw > 992 ? -1 : -0.6;
+		this.title.sync();
+		this.subtitle.sync();
+
+		this._scene.add(this.title);
+		this._scene.add(this.subtitle);
 	}
 
 	update = () => {
@@ -90,9 +95,16 @@ export default class App {
 		this._renderer.setSize(this._vw, this._vh);
 		this._camera.aspect = this._vw / this._vh;
 		this._camera.updateProjectionMatrix();
+		if (this.title && this.subtitle) {
+			this.title.fontSize = this._vw > 992 ? 1.86 : 1.2;
+			this.subtitle.fontSize = this._vw > 576 ? 0.165 : 0.12;
+			this.subtitle.position.y = this._vw > 992 ? -1 : -0.6;
+			this.title?.sync();
+			this.subtitle?.sync();
+		}
 	}
 
 	addListeners() {
-		window.addEventListener('resize', () => this.resize());
+		window.addEventListener("resize", () => this.resize());
 	}
 }
